@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All HTML Tags Demo</title>
+</head>
+<body>
+
+    <!-- Headings -->
+    <h1>Main Heading</h1>
+    <h2>Sub Heading</h2>
+
+    <!-- Paragraph & text formatting -->
+    <p>This is a <b>bold</b>, <i>italic</i>, <u>underline</u> text.</p>
+    <p>This is <strong>important</strong> and <em>emphasized</em>.</p>
+
+    <!-- Links -->
+    <a href="https://www.google.com" target="_blank">Go to Google</a>
+
+    <!-- Image -->
+    <img src="https://via.placeholder.com/150" alt="Sample Image">
+
+    <!-- List -->
+    <ul>
+        <li>Unordered item 1</li>
+        <li>Unordered item 2</li>
+    </ul>
+
+    <ol>
+        <li>Ordered item 1</li>
+        <li>Ordered item 2</li>
+    </ol>
+
+    <!-- Table -->
+    <table border="1">
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+        </tr>
+        <tr>
+            <td>Salman</td>
+            <td>20</td>
+        </tr>
+    </table>
+
+    <!-- Form -->
+    <form>
+        <label>Name:</label>
+        <input type="text"><br><br>
+
+        <label>Password:</label>
+        <input type="password"><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <!-- Button -->
+    <button>Click Me</button>
+
+    <!-- Division & Span -->
+    <div style="background-color: lightblue; padding: 10px;">
+        This is a div block
+        <span style="color:red;">This is span</span>
+    </div>
+
+    <!-- Line break & horizontal line -->
+    <br>
+    <hr>
+
+    <!-- Audio & Video -->
+    <audio controls>
+        <source src="audio.mp3" type="audio/mpeg">
+    </audio>
+
+    <video width="300" controls>
+        <source src="video.mp4" type="video/mp4">
+    </video>
+
+    <!-- Semantic Tags -->
+    <header>Header Section</header>
+    <nav>Navigation Bar</nav>
+    <section>Main Section</section>
+    <article>Article Content</article>
+    <aside>Sidebar</aside>
+    <footer>Footer Section</footer>
+
+</body>
+</html>
