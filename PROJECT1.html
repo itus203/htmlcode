@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daffodil International University | Student Portal</title>
+    <!-- Font Awesome Icons - exact match with source sidebar -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- General Reset & Variables --- */
+        :root {
+            --diu-navy: #0b132b;    /* Sidebar exact color [1] */
+            --diu-blue: #303f9f;    /* Dashboard cards blue [1] */
+            --diu-green: #8bc34a;   /* Active status green [2] */
+            --bg-gray: #f3f3f4;     /* Global background color */
+            --text-main: #676a6c;
+            --border-light: #e7eaec;
+            --submenu-bg: #293846;
+        }
+
+        * { box-sizing: border-box; }
+        body { font-family: 'Open Sans', 'Segoe UI', sans-serif; margin: 0; background-color: var(--bg-gray); color: var(--text-main); }
+
+        /* --- 1. LOGIN PAGE STYLING [3, 4] --- */
+        #login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #f3f3f4 url('https://auth1.diu.edu.bd/resources/v70m7/login/diu-student/img/bg.png') center bottom/contain no-repeat;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999;
+        }
+        .login-box {
+            background: white; width: 400px; padding: 40px; border-top: 4px solid #1c84c6;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; border-radius: 2px;
+        }
+        .login-box h2 { font-weight: 300; font-size: 24px; color: #676a6c; margin-bottom: 25px; }
+        .login-box input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #e5e6e7; }
+        .btn-signin { width: 100%; background: #007bff; color: white; border: none; padding: 12px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+
+        /* --- 2. SIDEBAR STYLING [1, 5, 6] --- */
+        #main-app { display: none; }
+        .sidebar {
+            width: 220px; background-color: var(--diu-navy); height: 100vh; position: fixed;
+            overflow-y: auto; color: #a7b1c2; font-size: 13px; z-index: 1000;
+        }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #333; }
+        
+        .logo-box { padding: 25px 15px; text-align: center; background: #080d1e; border-bottom: 1px solid #ffffff0d; }
+        .logo-box img { width: 160px; }
+
+        .nav-list { list-style: none; padding: 0; margin: 0; }
+        .nav-link { 
+            padding: 12px 20px; display: flex; align-items: center; cursor: pointer; 
+            border-left: 4px solid transparent; transition: background 0.2s;
+        }
+        .nav-link:hover, .nav-link.active { background: #293846; color: white; }
+        .nav-link.active { border-left-color: var(--diu-blue); }
+        .nav-link i:first-child { width: 20px; margin-right: 15px; font-size: 14px; }
+        
+        .chevron { margin-left: auto; font-size: 10px; transition: 0.3s; }
+        .nav-link.open .chevron { transform: rotate(90deg); }
+
+        /* Submenu Indentation [5, 6] */
+        .submenu { display: none; background: var(--submenu-bg); list-style: none; padding: 0; margin: 0; }
+        .submenu li { padding: 10px 20px 10px 55px; cursor: pointer; font-size: 12px; display: flex; align-items: center; }
+        .submenu li:hover { color: white; }
+        .submenu li i { font-size: 8px; margin-right: 15px; }
+
+        /* --- 3. MAIN CONTENT AREA --- */
+        .wrapper { margin-left: 220px; transition: 0.3s; }
+        header { 
+            background: white; height: 50px; display: flex; align-items: center; 
+            justify-content: space-between; padding: 0 20px; border-bottom: 1px solid var(--border-light);
+            position: sticky; top: 0; z-index: 99;
+        }
+        .user-top-info { text-align: right; font-size: 11px; line-height: 1.3; color: #333; }
+        .page-content { padding: 20px 25px; min-height: 85vh; }
+
+        /* --- 4. PAGE SPECIFIC COMPONENTS --- */
+        
+        /* Dashboard Stats Cards [1, 7] */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: var(--diu-blue); color: white; padding: 15px; border-radius: 4px; text-align: center; }
+        .stat-card h5 { margin: 0 0 10px; font-size: 14px; border-bottom: 1px solid #ffffff1a; padding-bottom: 8px; }
+        .stat-card .val { font-size: 18px; font-weight: 700; }
+
+        /* Panels & Tables [2, 8, 9] */
+        .panel { background: white; padding: 20px; border-radius: 2px; margin-bottom: 20px; border-top: 1px solid var(--border-light); }
+        .panel-title { font-weight: 600; font-size: 15px; margin-bottom: 15px; color: #333; display: block; }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 15px; }
+        th, td { border: 1px solid var(--border-light); padding: 10px; text-align: left; }
+        th { background: #f9f9f9; color: #333; font-weight: 600; }
+
+        .active-badge { background: var(--diu-green); color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; }
+        
+        /* Profile Layout [2, 10] */
+        .profile-container { display: flex; gap: 30px; }
+        .profile-sidebar { width: 280px; }
+        .profile-main { flex: 1; }
+        .status-list { list-style: none; padding: 0; border: 1px solid #eee; background: #fff; }
+        .status-item { padding: 10px 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; font-size: 12px; cursor: pointer; }
+        .status-item.active { border-left: 3px solid #1c84c6; font-weight: bold; background: #f9f9f9; }
+        .status-item i { margin-right: 10px; font-size: 14px; }
+
+        /* Search Bar [8, 11, 12] */
+        .search-area { display: flex; gap: 10px; margin-bottom: 20px; }
+        .search-area select { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .btn-search { background: #2f4050; color: white; border: none; padding: 0 30px; border-radius: 4px; cursor: pointer; }
+
+        footer { text-align: center; padding: 15px; border-top: 1px solid var(--border-light); font-size: 12px; color: #676a6c; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. LOGIN SECTION [3, 4] -->
+    <div id="login-overlay">
+        <div class="login-box">
+            <img src="https://daffodilvarsity.edu.bd/images/logo.png" style="width: 200px; margin-bottom: 25px;">
+            <h2>Sign in to your account</h2>
+            <input type="text" placeholder="Student ID or Registration ID">
+            <input type="password" placeholder="Password">
+            <div style="display:flex; justify-content:space-between; font-size:12px; margin:10px 0;">
+                <label><input type="checkbox" style="width:auto;"> Remember me</label>
+                <a href="#" style="color:#007bff; text-decoration:none;">Forgot Password?</a>
+            </div>
+            <button class="btn-signin" onclick="login()">Sign In</button>
+        </div>
+    </div>
+
+    <!-- 2. MAIN APP STRUCTURE -->
+    <div id="main-app">
+        <!-- THE SIDEBAR [1, 5] -->
+        <div class="sidebar">
+            <div class="logo-box"><img src="https://daffodilvarsity.edu.bd/images/logo.png"></div>
+            <ul class="nav-list">
+                <li class="nav-link active" onclick="nav('dash', this)"><i class="fas fa-th-large"></i> Dashboard</li>
+                <li class="nav-link" onclick="nav('profile', this)"><i class="fas fa-user-circle"></i> Student Profile</li>
+                <li class="nav-link" onclick="nav('ledger', this)"><i class="fas fa-money-check-alt"></i> Payment Ledger</li>
+                <li class="nav-link" onclick="nav('waiver', this)"><i class="fas fa-hand-holding-usd"></i> Waiver</li>
+                <li class="nav-link" onclick="nav('clearance', this)"><i class="fas fa-clipboard-check"></i> Registration/Exam Clearance</li>
+                <li class="nav-link" onclick="nav('courses', this)"><i class="fas fa-book"></i> Registered Course</li>
+                <li class="nav-link" onclick="nav('result', this)"><i class="fas fa-poll-h"></i> Result</li>
+                <li class="nav-link" onclick="nav('routine', this)"><i class="fas fa-calendar-alt"></i> Routine</li>
+                <li class="nav-link" onclick="nav('live', this)"><i class="fas fa-book-open"></i> Live Result</li>
+                
+                <!-- Dropdown Menu [5] -->
+                <li class="nav-link" onclick="toggleSub(this)">
+                    <i class="fas fa-graduation-cap"></i> Scholarship <i class="fas fa-chevron-right chevron"></i>
+                </li>
+                <ul class="submenu">
+                    <li onclick="nav('scholar-apply')"><i class="far fa-circle"></i> Apply</li>
+                    <li onclick="nav('scholar-status')"><i class="far fa-circle"></i> Applied Scholarship</li>
+                </ul>
+
+                <li class="nav-link" onclick="nav('convocation', this)"><i class="fas fa-certificate"></i> Convocation Apply</li>
+                <li class="nav-link" onclick="location.reload()"><i class="fas fa-sign-out-alt"></i> Logout</li>
+            </ul>
+        </div>
+
+        <div class="wrapper">
+            <header>
+                <i class="fas fa-bars" style="color:var(--diu-blue); cursor:pointer;"></i>
+                <div class="user-top-info">
+                    <strong>Md. Salman Khan</strong> [1]<br>
+                    <span>242-35-203</span>
+                </div>
+            </header>
+
+            <div class="page-content">
+                
+                <!-- DASHBOARD PAGE [1, 7] -->
+                <div id="dash" class="page-sec">
+                    <h3 style="margin-top:0;">Dashboard <small style="font-weight:normal; color:#999;">Student Portal</small></h3>
+                    <div class="stats-grid">
+                        <div class="stat-card"><h5>Total Payable</h5><div class="val">404,768.00</div></div>
+                        <div class="stat-card"><h5>Total Paid</h5><div class="val">393,936.00</div></div>
+                        <div class="stat-card"><h5>Total Due</h5><div class="val">10,832.00</div></div>
+                        <div class="stat-card"><h5>Total Other</h5><div class="val">1,900.00</div></div>
+                    </div>
+                    <div class="panel">
+                        <span class="panel-title"><i class="far fa-calendar-alt"></i> Today's Routine – Wednesday</span>
+                        <p style="text-align:center; color:#ccc; padding:30px;">No routine available for today.</p>
+                    </div>
+                    <div class="panel">
+                        <span class="panel-title">Semester Wise Result</span>
+                        <div style="height: 200px; display:flex; align-items:flex-end; gap:50px; justify-content:center; border-bottom: 1px solid #ddd; padding-bottom:10px;">
+                            <div style="background: #777; width: 35px; height: 180px;"></div>
+                            <div style="background: #66bb6a; width: 35px; height: 160px;"></div>
+                            <div style="background: #7e57c2; width: 35px; height: 175px;"></div>
+                            <div style="background: #b39ddb; width: 35px; height: 165px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STUDENT PROFILE PAGE [2, 10] -->
+                <div id="profile" class="page-sec hidden">
+                    <div class="profile-container">
+                        <div class="profile-sidebar">
+                            <div class="panel" style="text-align:center;">
+                                <div style="width:120px; height:140px; background:#eee; margin:0 auto 15px; border:1px solid #ddd;"></div>
+                                <h3 style="margin:5px 0;">Md. Salman Khan</h3>
+                                <p style="font-size:12px; color:#888;">01307196571</p>
+                                <span class="active-badge">Active</span>
+                            </div>
+                            <ul class="status-list">
+                                <li class="status-item"><i class="fas fa-check-circle" style="color:#1ab394;"></i> Person Information</li>
+                                <li class="status-item active"><i class="fas fa-check-circle" style="color:#1ab394;"></i> Academic Information</li>
+                                <li class="status-item"><i class="fas fa-sync" style="color:#f8ac59;"></i> Payment Scheme</li>
+                                <li class="status-item"><i class="fas fa-times-circle" style="color:#ed5565;"></i> Bank Information</li>
+                            </ul>
+                        </div>
+                        <div class="profile-main">
+                            <div class="panel">
+                                <span class="panel-title">B.Sc. in Software Engineering <span class="active-badge">Active</span></span>
+                                <table>
+                                    <tr><th>Student ID</th><td>0242420005341203</td><th>Registration ID</th><td>242-35-203</td></tr>
+                                    <tr><th>Batch</th><td>44</td><th>Shift</th><td>MORNING</td></tr>
+                                    <tr><th>Program</th><td colspan="3">B.Sc. in Software Engineering</td></tr>
+                                    <tr><th>Faculty</th><td colspan="3">Faculty of Science & Information Technology</td></tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EXAM CLEARANCE PAGE [9, 13] -->
+                <div id="clearance" class="page-sec hidden">
+                    <h3>Registration/Exam Clearance</h3>
+                    <div class="panel">
+                        <table>
+                            <thead>
+                                <tr><th>SL</th><th>Semester</th><th>Registration</th><th>Mid-Term Exam</th><th>Final Exam</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1</td><td>Summer 2025 (252)</td><td><i class="fas fa-check" style="color:green;"></i></td><td><i class="fas fa-times" style="color:red;"></i></td><td><i class="fas fa-check" style="color:green;"></i></td></tr>
+                                <tr><td>2</td><td>Fall 2025 (253)</td><td><i class="fas fa-check" style="color:green;"></i></td><td><i class="fas fa-times" style="color:red;"></i></td><td><i class="fas fa-check" style="color:green;"></i></td></tr>
+                                <tr><td>3</td><td>Spring 2026 (261)</td><td><i class="fas fa-check" style="color:green;"></i></td><td><i class="fas fa-times" style="color:red;"></i></td><td><i class="fas fa-times" style="color:red;"></i></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- CONVOCATION PAGE [6] -->
+                <div id="convocation" class="page-sec hidden">
+                    <h3>Convocation Apply</h3>
+                    <div class="panel" style="text-align:center; padding:150px 20px;">
+                        <h1 style="color:#2f4050; font-size:42px; font-weight:500;">You are not eligible for Convocation !</h1>
+                    </div>
+                </div>
+
+                <!-- WAIVER PAGE [14] -->
+                <div id="waiver" class="page-sec hidden">
+                    <h3>Semester Waiver</h3>
+                    <div class="panel">
+                        <div style="background:#42a5f5; color:white; padding:10px; border-radius:4px; margin-bottom:10px;">Spring 2026, 261 <span style="float:right;">50%</span></div>
+                        <p>Waiver Category: Result Based Waiver (General/Dakhil/BTEB)</p>
+                        <div style="background:#eee; height:15px; border-radius:10px; overflow:hidden;">
+                            <div style="background:#42a5f5; width:50%; height:100%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <footer>
+                2026 © – Developed by Daffodil International University [1, 6]
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        function login() {
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+        }
+
+        function toggleSub(el) {
+            let sub = el.nextElementSibling;
+            el.classList.toggle('open');
+            sub.style.display = (sub.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function nav(pageId, el) {
+            // Hide all pages
+            document.querySelectorAll('.page-sec').forEach(p => p.classList.add('hidden'));
+            // Show target page
+            document.getElementById(pageId).classList.remove('hidden');
+            
+            // Manage active sidebar state
+            if(el) {
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                el.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
